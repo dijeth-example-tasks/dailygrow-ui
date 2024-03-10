@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import TasksView from '@/views/TasksView.vue'
+import TasksView from '../views/TasksView.vue'
+import { authGuard, pathSaverGuard } from './guards'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,24 +8,44 @@ const router = createRouter({
     {
       path: '/',
       name: 'index',
-      redirect: { name: 'tasks' }
+      redirect: { name: 'tasks' },
     },
     {
       path: '/tasks',
       name: 'tasks',
-      component: TasksView
+      meta: { auth: true },
+      component: TasksView,
     },
     {
       path: '/clients',
       name: 'clients',
-      component: () => import('../views/ClientsView.vue')
+      meta: { auth: true },
+      component: () => import('../views/ClientsView.vue'),
     },
     {
       path: '/analytics',
       name: 'analytics',
-      component: () => import('../views/AnalyticsView.vue')
-    }
-  ]
+      meta: { auth: true },
+      component: () => import('../views/AnalyticsView.vue'),
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('../views/AboutView.vue'),
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
+    },
+    {
+      path: '/:unknownPath(.*)',
+      component: () => import('../views/NotFoundView.vue'),
+    },
+  ],
 })
+
+router.beforeEach(authGuard)
+router.beforeEach(pathSaverGuard)
 
 export default router

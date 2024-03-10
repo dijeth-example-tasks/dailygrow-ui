@@ -1,18 +1,21 @@
 <template>
   <aside>
     <header>
-      <img alt="logo" class="logo" src="@/assets/logo.svg" />
+      <RouterLink class="logo" :to="{ name: 'index' }">
+        <img alt="logo" src="@/assets/logo.svg" />
+      </RouterLink>
     </header>
     <nav>
       <RouterLink :to="{ name: 'tasks' }">Рассылки</RouterLink>
       <RouterLink :to="{ name: 'clients' }">Клиенты</RouterLink>
       <RouterLink :to="{ name: 'analytics' }">Аналитика</RouterLink>
+      <RouterLink :to="{ name: 'about' }">О приложении</RouterLink>
     </nav>
   </aside>
   <section>
     <header>
-      <span>d.orlov777@gmail.com</span>
-      <IconLogout />
+      <span>{{ user }}</span>
+      <IconLogout v-show="isAuthorize()" />
     </header>
     <RouterView />
   </section>
@@ -21,6 +24,9 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import IconLogout from './components/icons/IconLogout.vue'
+import { isAuthorize, useUser } from './store'
+
+const user = useUser()
 </script>
 
 <style scoped>
@@ -54,6 +60,11 @@ header span {
   display: block;
 }
 
+img {
+  width: 100%;
+  max-width: 100%;
+}
+
 nav {
   width: 100%;
   font-size: 1em;
@@ -76,8 +87,8 @@ nav a {
   margin-top: 0.5em;
 }
 
-nav a:first-of-type {
-  border: 0;
+nav a:hover {
+  background-color: #fff;
 }
 
 /* 

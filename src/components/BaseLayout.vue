@@ -1,6 +1,8 @@
 <template>
   <h1>{{ title }}</h1>
-  <slot />
+  <div class="layout-content">
+    <slot />
+  </div>
 </template>
 
 <script setup lang="ts">

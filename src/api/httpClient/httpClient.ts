@@ -1,14 +1,15 @@
 import axios from 'axios'
 import { createErrorResult, createSuccessResult } from './ResultContainer'
 
-type TNetworkErrorHandler = () => Promise<void>
+type TNetworkErrorHandler = () => void
 
 let _onNetworkError: TNetworkErrorHandler
 let _onAuthenticatedHandler: TNetworkErrorHandler
 
 export const httpClient = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL,
+  baseURL: import.meta.env.VITE_APP_SERVER_URL,
   withCredentials: true,
+  withXSRFToken: true,
   validateStatus(status) {
     /*
       401 Unauthenticated
@@ -17,7 +18,7 @@ export const httpClient = axios.create({
       429 Too Many Requests
      */
     return ![401, 405, 408, 429].includes(status) && status < 500
-  }
+  },
 })
 
 httpClient.interceptors.response.use(
@@ -27,9 +28,9 @@ httpClient.interceptors.response.use(
       return createErrorResult(
         {
           statusCode: response.status,
-          message: response.data.message ?? response.data ?? response.statusText
+          message: response.data.message ?? response.data ?? response.statusText,
         },
-        response
+        response,
       )
     } else {
       return createSuccessResult(response.data, response)
@@ -47,7 +48,7 @@ httpClient.interceptors.response.use(
     }
 
     throw new Error(error)
-  }
+  },
 )
 
 // Добавляем возможность устанавливать обработчики некоторых ошибок API

@@ -1,6 +1,7 @@
 import type { ResultContainer } from 'src/api/httpClient/ResultContainer'
 import { useProgress } from '../plugins/progress'
 import { ref, type Ref } from 'vue'
+import { useToaster } from '../plugins/toaster'
 
 export type TApiFunction<T> = (...args: any[]) => Promise<ResultContainer<T>>
 export type TApiReturn<T> = {
@@ -26,12 +27,13 @@ export const API_NATIVE_RESPONSE = 'API_NATIVE_RESPONSE'
  */
 export function useApi<T>(
   apiFunction: TApiFunction<T>,
-  { showProgress = false, progressKey = '' } = {}
+  { showProgress = false, successToast = '', errorToast = '', progressKey = '' } = {},
 ): TApiReturn<T> {
   const result = ref<ResultContainer<T>>()
   const isLoading = ref<boolean>(false)
   const progress = useProgress()
   const progressId = progressKey || Date.now().toString()
+  const toaster = useToaster()
 
   const startProgress = () => {
     if (progress && showProgress) {
@@ -48,6 +50,16 @@ export function useApi<T>(
       progress.fail()
     }
   }
+  const showSuccessToast = () => {
+    if (toaster && successToast) {
+      toaster.success(successToast)
+    }
+  }
+  const showErrorToast = (nativeError: string) => {
+    if (toaster && errorToast) {
+      toaster.error(errorToast === API_NATIVE_RESPONSE ? nativeError : errorToast)
+    }
+  }
 
   const request = async (...args: any[]) => {
     isLoading.value = true
@@ -56,8 +68,10 @@ export function useApi<T>(
     result.value = await apiFunction(...args)
     if (result.value.success) {
       finishProgress()
+      showSuccessToast()
     } else {
       failProgress()
+      showErrorToast(result.value.error.message)
     }
     isLoading.value = false
 
@@ -67,6 +81,6 @@ export function useApi<T>(
   return {
     request,
     result,
-    isLoading
+    isLoading,
   }
 }
