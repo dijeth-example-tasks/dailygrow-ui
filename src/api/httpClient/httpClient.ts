@@ -10,6 +10,9 @@ export const httpClient = axios.create({
   baseURL: import.meta.env.VITE_APP_SERVER_URL,
   withCredentials: true,
   withXSRFToken: true,
+  headers: {
+    Accept: 'application/json',
+  },
   validateStatus(status) {
     /*
       401 Unauthenticated

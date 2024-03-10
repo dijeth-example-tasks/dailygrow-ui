@@ -15,18 +15,27 @@
   <section>
     <header>
       <span>{{ user }}</span>
-      <IconLogout v-show="isAuthorize()" />
+      <button class="logout" v-show="isAuthorize()" @click="handleLogout">
+        <IconLogout />
+      </button>
     </header>
     <RouterView />
   </section>
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import IconLogout from './components/icons/IconLogout.vue'
 import { isAuthorize, useUser } from './store'
+import { logoutService } from './services/authService'
 
 const user = useUser()
+const router = useRouter()
+
+const handleLogout = async () => {
+  await logoutService()
+  router.push({ name: 'index' })
+}
 </script>
 
 <style scoped>
@@ -91,34 +100,10 @@ nav a:hover {
   background-color: #fff;
 }
 
-/* 
-
-
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-} */
+.logout {
+  display: block;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+}
 </style>
