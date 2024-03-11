@@ -7,9 +7,10 @@
 </template>
 
 <script lang="ts" setup>
+import type { TClient } from '@/types'
 import { computed } from 'vue'
 
-const props = defineProps<{ clients: { name: string; phone: string; birthday: string }[] }>()
+const props = defineProps<{ clients: TClient[] }>()
 const formattedClients = computed(() =>
   props.clients.map((it) => ({
     ...it,

@@ -24,7 +24,7 @@ const clients = computed(() => {
 
   const segment = data.value.find(({ id }) => id === activeSegment.value)
 
-  return segment ? segment.clients : []
+  return segment ? segment.clients || [] : []
 })
 
 watchEffect(() => {

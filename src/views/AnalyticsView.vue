@@ -18,13 +18,14 @@ const { request, result } = useApi<TTaskRun[]>(getTaskRuns, { showProgress: true
 
 const data = computed(() => (result.value?.success ? result.value.data : []))
 const segmentData = computed(() => {
-  const segments = new Set()
-  data.value.forEach(({ task: { segment } }) => {
-    segments.add(JSON.stringify(segment))
-  })
+  const uniqueSegments = data.value.reduce((acc, { task }) => {
+    acc.set(task!.segment.id, task!.segment)
+    return acc
+  }, new Map())
 
-  return [...segments].map((it) => JSON.parse(it))
+  return Array.from(uniqueSegments.values())
 })
+
 const activeSegment = ref()
 
 const taskRuns = computed(() => {
@@ -32,11 +33,11 @@ const taskRuns = computed(() => {
     return []
   }
 
-  const taskRuns = data.value.filter(({ task: { segment } }) => segment.id === activeSegment.value)
+  const taskRuns = data.value.filter(({ task }) => task!.segment.id === activeSegment.value)
 
-  return taskRuns.map(({ task: { name, type }, date, messages_count, errors_count }) => ({
-    taskName: name,
-    taskType: type,
+  return taskRuns.map(({ task, date, messages_count, errors_count }) => ({
+    taskName: task!.name,
+    taskType: task!.type,
     date,
     allMessages: messages_count,
     errorMessages: errors_count,

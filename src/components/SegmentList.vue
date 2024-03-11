@@ -14,10 +14,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { TSegment } from '@/types'
 import { ArrowDown } from '@element-plus/icons-vue'
 import { computed } from 'vue'
 
-const props = defineProps<{ segments: { name: string; id: string }[]; modelValue: string }>()
+const props = defineProps<{ segments: TSegment[]; modelValue: string }>()
 const emit = defineEmits(['update:modelValue'])
 
 const handleCommand = (command: string | number | object) => {
