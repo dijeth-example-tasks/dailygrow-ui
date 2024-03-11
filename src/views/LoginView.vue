@@ -1,10 +1,6 @@
 <template>
   <BaseLayout title="Вход">
-    <form @submit.prevent="handleSubmit">
-      <input type="email" v-model="email" />
-      <input type="password" v-model="password" />
-      <button type="submit">Login</button>
-    </form>
+    <LoginForm @login="handleLogin" />
   </BaseLayout>
 </template>
 
@@ -14,17 +10,15 @@ import { useToaster } from '@/plugins/toaster'
 import { loginService } from '@/services/authService'
 import { isAuthorize } from '@/store'
 import { getBackPath } from '@/utils'
-import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import LoginForm from '../components/LoginForm.vue'
 
-const email = ref<string>('d.orlov777@gmail.com')
-const password = ref<string>('1enn0quE')
 const router = useRouter()
 const route = useRoute()
 const toaster = useToaster()
 
-const handleSubmit = async () => {
-  await loginService(email.value, password.value)
+const handleLogin = async ({ email, password }: { email: string; password: string }) => {
+  await loginService(email, password)
 
   if (isAuthorize()) {
     router.push({ path: getBackPath(route.query) || '/' })
