@@ -1,32 +1,28 @@
 <template>
   <BaseLayout title="Рассылки">
-    <SegmentList v-if="data.length" :segments="segmentData" v-model="activeSegment" />
-    <TaskList :tasks="data" />
+    <SegmentList v-if="taskData.length" :segments="segmentData" v-model="activeSegment" />
+    <TaskList :tasks="segmentTaskData" />
   </BaseLayout>
 </template>
 
 <script setup lang="ts">
-import { getTasks } from '@/api/api'
+import { getSegments, getTasks } from '@/api/api'
 import BaseLayout from '@/components/BaseLayout.vue'
 import TaskList from '@/components/TaskList.vue'
 import SegmentList from '@/components/SegmentList.vue'
-import { useApi } from '@/composables/useApi'
-import type { TTask } from '@/types'
+import type { TSegment, TTask } from '@/types'
 import { computed, onMounted, ref, watchEffect } from 'vue'
+import { useMultiApi } from '../composables/useMultiApi'
 
-const { request, result } = useApi<TTask[]>(getTasks, { showProgress: true })
-const data = computed(() => (result.value?.success ? result.value.data : []))
-
-const segmentData = computed(() => {
-  const uniqueSegments = data.value.reduce((acc, { segment }) => {
-    const { id, name } = segment
-    acc.set(id, { id, name })
-    return acc
-  }, new Map())
-
-  return Array.from(uniqueSegments.values())
+const { request, result } = useMultiApi<[TTask[], TSegment[]]>([getTasks, getSegments], {
+  showProgress: true,
 })
 const activeSegment = ref()
+const taskData = computed(() => (result.value?.success ? result.value.data[0] : []))
+const segmentData = computed(() => (result.value?.success ? result.value.data[1] : []))
+const segmentTaskData = computed(() =>
+  taskData.value.filter(({ segment }) => segment.id === activeSegment.value),
+)
 
 watchEffect(() => {
   activeSegment.value = segmentData.value.length ? segmentData.value[0].id : null
