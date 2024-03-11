@@ -1,4 +1,4 @@
-import type { TSegment, TTaskRun, TTask } from '@/types'
+import type { TSegment, TTaskRun, TTask, TSubmitTask } from '@/types'
 import type { ResultContainer } from './httpClient/ResultContainer'
 import { httpClient } from './httpClient/httpClient'
 
@@ -23,17 +23,8 @@ export const updateTask = (task: TTask): Promise<ResultContainer<TTask>> => {
   })
 }
 
-export const createTask = (task: TTask): Promise<ResultContainer<TTask>> => {
-  const { type, time, text, active, description, segment, name } = task
-  return httpClient.put('/api/tasks/create', {
-    type,
-    time,
-    text,
-    segment_id: segment.id,
-    active,
-    description,
-    name,
-  })
+export const createTask = (task: TSubmitTask): Promise<ResultContainer<TTask>> => {
+  return httpClient.post('/api/tasks/create', task)
 }
 
 export const deleteTask = (task: TTask): Promise<ResultContainer<TTask>> => {

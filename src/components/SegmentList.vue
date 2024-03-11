@@ -18,14 +18,20 @@ import type { TSegment } from '@/types'
 import { ArrowDown } from '@element-plus/icons-vue'
 import { computed } from 'vue'
 
-const props = defineProps<{ segments: TSegment[]; modelValue: string }>()
+const props = defineProps<{ segments: TSegment[]; modelValue: number | null }>()
 const emit = defineEmits(['update:modelValue'])
 
 const handleCommand = (command: string | number | object) => {
   emit('update:modelValue', command)
 }
 
-const selectedItem = computed(() => props.segments.find(({ id }) => props.modelValue === id))
+const selectedItem = computed(() => {
+  if (props.modelValue === null) {
+    return props.segments[0]
+  }
+
+  return props.segments.find(({ id }) => props.modelValue === id)
+})
 </script>
 
 <style scoped>
