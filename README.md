@@ -1,4 +1,8 @@
-# dailygrow-ui
+# Тестовое задание Daily Grow "Рассылка"
+
+Фронтенд часть
+
+Серверная часть: https://github.com/dijeth-example-tasks/dailygrow-sms
 
 ## Установка
 
