@@ -8,7 +8,7 @@
 
 1. Склонировать проект
    ```sh
-   git@github.com:dijeth-example-tasks/dailygrow-ui.git
+   git clone git@github.com:dijeth-example-tasks/dailygrow-ui.git
    ```
 1. Установить зависимости и запустить дев-сервер
    ```sh
