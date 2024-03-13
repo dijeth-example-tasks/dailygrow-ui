@@ -1,4 +1,4 @@
-import type { TSegment, TTaskRun, TTask, TSubmitTask } from '@/types'
+import type { TSegment, TTaskRun, TTask, TSubmitTask, TSubmitClient, TClient } from '@/types'
 import type { ResultContainer } from './httpClient/ResultContainer'
 import { httpClient } from './httpClient/httpClient'
 
@@ -29,4 +29,12 @@ export const createTask = (task: TSubmitTask): Promise<ResultContainer<TTask>> =
 
 export const deleteTask = (task: TTask): Promise<ResultContainer<TTask>> => {
   return httpClient.delete(`/api/tasks/${task.id}`)
+}
+
+export const createClient = (client: TSubmitClient): Promise<ResultContainer<TClient>> => {
+  return httpClient.post('/api/clients/create', client)
+}
+
+export const deleteClient = (client: TClient): Promise<ResultContainer<TClient>> => {
+  return httpClient.delete(`/api/clients/${client.id}`)
 }

@@ -40,6 +40,7 @@ export type TTask = {
 }
 
 export type TSubmitTask = Omit<TTask, 'id' | 'runs' | 'segment'> & { segment_id: number }
+export type TSubmitClient = Omit<TClient, 'id' | 'segment'> & { segment_id: number }
 
 export type TClient = {
   id: string

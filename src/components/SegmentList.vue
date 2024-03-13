@@ -1,8 +1,10 @@
 <template>
   <el-dropdown class="segment-list" @command="handleCommand">
-    <span class="el-dropdown-link">
-      {{ selectedItem?.name }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
-    </span>
+    <el-button class="segment-list__button">
+      <span class="el-dropdown-link">
+        {{ selectedItem?.name }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
+      </span>
+    </el-button>
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item v-for="segment in segments" :command="segment.id" :key="segment.id">{{
@@ -44,5 +46,15 @@ const selectedItem = computed(() => {
 
 .segment-list {
   margin-bottom: 1em;
+}
+
+.el-dropdown-link {
+  min-width: 200px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.el-dropdown-menu {
+  min-width: 200px;
 }
 </style>
