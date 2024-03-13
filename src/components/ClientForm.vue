@@ -43,11 +43,11 @@
 </template>
 
 <script lang="ts" setup>
-import { createClient, createTask } from '@/api/api'
+import { createClient } from '@/api/api'
 import { useToaster } from '@/plugins/toaster'
-import { TaskTimeLabel, type TSegment, type TSubmitClient, type TTaskType } from '@/types'
+import { type TSegment, type TSubmitClient } from '@/types'
 import type { FormInstance } from 'element-plus'
-import { computed, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 
 const props = defineProps<{ segments: TSegment[] }>()
 const emit = defineEmits(['create'])
@@ -80,6 +80,14 @@ const formatPhone = (value: string) => {
   return value.replace(/\D/g, '').replace(/(\d)(\d\d\d)(\d\d\d)(\d\d\d\d)/, '+$1 ($2) $3 $4')
 }
 
+const formatDate = (date: string): string => {
+  const [day, month, year] = new Date(date)
+    .toLocaleString('en-US', { timeZone: 'Europe/Moscow' })
+    .split(',')[0]
+    .split('/')
+  return `${year}-${month}-${day}`
+}
+
 const submitForm = async (formElement: FormInstance | undefined) => {
   if (!formElement) {
     return
@@ -87,7 +95,8 @@ const submitForm = async (formElement: FormInstance | undefined) => {
 
   await formElement.validate(async (valid, fields) => {
     if (valid) {
-      const response = await createClient(form)
+      const client = { ...form, birthday: formatDate(form.birthday) }
+      const response = await createClient(client)
       if (response.success) {
         emit('create', form)
         toaster.success('Клиент успешно добавлен')

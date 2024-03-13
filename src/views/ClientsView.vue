@@ -13,7 +13,7 @@
 import { getSegments } from '@/api/api'
 import BaseLayout from '@/components/BaseLayout.vue'
 import { useApi } from '@/composables/useApi'
-import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import SegmentList from '../components/SegmentList.vue'
 import ClientList from '../components/ClientList.vue'
 import ClientForm from '../components/ClientForm.vue'
@@ -21,7 +21,7 @@ import type { TSubmitClient } from '@/types'
 
 const { request, result } = useApi(getSegments, { showProgress: true })
 const segmentData = computed(() => (result.value?.success ? result.value.data : []))
-const activeSegment = ref(null)
+const activeSegment = ref<null | number>(null)
 const clients = computed(() => {
   if (null === activeSegment.value) {
     return []
