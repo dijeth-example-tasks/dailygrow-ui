@@ -7,11 +7,11 @@
     ref="refForm"
     status-icon
   >
-    <el-form-item label="Название">
+    <el-form-item label="Название" prop="name">
       <el-input v-model="form.name" />
     </el-form-item>
 
-    <el-form-item label="Вид">
+    <el-form-item label="Вид" prop="type">
       <el-select v-model="form.type" placeholder="Укажите частоту рассылки">
         <el-option label="Однократно" value="once" />
         <el-option label="Ежедневно" value="daily" />
@@ -21,15 +21,16 @@
       </el-select>
     </el-form-item>
 
-    <el-form-item label="Время">
-      <el-input-number v-model="form.time" :placeholder="taskTimeLabel" />
+    <el-form-item label="Время" prop="time">
+      <el-input-number v-model="form.time" />
+      <span style="margin-left: 1em">{{ taskTimeLabel }}</span>
     </el-form-item>
 
-    <el-form-item label="Текст рассылки">
+    <el-form-item label="Текст рассылки" prop="text">
       <el-input v-model="form.text" type="textarea" />
     </el-form-item>
 
-    <el-form-item label="Сегмент">
+    <el-form-item label="Сегмент" prop="segment_id">
       <el-select v-model="form.segment_id" placeholder="Укажите сегмент">
         <el-option
           v-for="segment in segments"
@@ -40,11 +41,11 @@
       </el-select>
     </el-form-item>
 
-    <el-form-item label="Статус">
+    <el-form-item label="Статус" prop="active">
       <el-switch v-model="form.active" />
     </el-form-item>
 
-    <el-form-item label="Описание">
+    <el-form-item label="Описание" prop="description">
       <el-input v-model="form.description" type="textarea" />
     </el-form-item>
 
@@ -79,9 +80,12 @@ const form = reactive<TSubmitTask>({
 })
 
 const rules = {
-  name: [{ required: true, message: 'Please input Activity name', trigger: 'change' }],
-  text: [{ required: true, message: 'Please input Activity name', trigger: 'change' }],
-  description: [{ required: true, message: 'Please input Activity name', trigger: 'change' }],
+  name: [{ required: true, message: 'Заполните название рассылки', trigger: 'change' }],
+  text: [{ required: true, message: 'Заполните текст СМС', trigger: 'change' }],
+  type: [{ required: true, message: 'Выберите тип рассылки', trigger: 'blur' }],
+  segment_id: [{ required: true, message: 'Укажите сегмент', trigger: 'blur' }],
+  active: [{ required: true, message: 'Заполните поле', trigger: 'blur' }],
+  time: [{ required: true, message: 'Укажите значение смещения', trigger: 'blur' }],
 }
 
 const taskTimeLabel = computed(() => TaskTimeLabel[form.type as TTaskType])
@@ -102,9 +106,13 @@ const submitForm = async (formElement: FormInstance | undefined) => {
   await formElement.validate(async (valid, fields) => {
     if (valid) {
       const task = prepareData(form)
-      await createTask(task)
-      emit('create', task)
-      toaster.success('Рассылка успешно создана')
+      const response = await createTask(task)
+      if (response.success) {
+        emit('create', task)
+        toaster.success('Рассылка успешно создана')
+      } else {
+        toaster.error(`Неправильно заполнены поля: ${JSON.stringify(response.response?.data)}`)
+      }
     } else {
       toaster.error(`Неправильно заполнены поля: ${fields}`)
     }
