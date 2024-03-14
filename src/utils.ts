@@ -33,3 +33,10 @@ export const formatTime = (time: number, type: TTaskType): string => {
       return ''
   }
 }
+
+export const arrayDifference = (minuend: string[], subtrahend: string[]): string[] =>
+  subtrahend.length
+    ? subtrahend.reduce<string[]>((acc, cur) => {
+        return !minuend.includes(cur) ? [...acc, cur] : acc
+      }, [])
+    : [...minuend]
