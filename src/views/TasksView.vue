@@ -16,15 +16,16 @@ import TaskForm from '@/components/TaskForm.vue'
 import TaskList from '@/components/TaskList.vue'
 import SegmentList from '@/components/SegmentList.vue'
 import type { TSegment, TSubmitTask, TTask } from '@/types'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useMultiApi } from '../composables/useMultiApi'
+import { useSegmentQuery } from '@/composables/useSegmentQuery'
 
 const { request, result } = useMultiApi<[TTask[], TSegment[]]>([getTasks, getSegments], {
   showProgress: true,
 })
-const activeSegment = ref<null | number>(null)
 const taskData = computed(() => (result.value?.success ? result.value.data[0] : []))
 const segmentData = computed(() => (result.value?.success ? result.value.data[1] : []))
+const activeSegment = useSegmentQuery(segmentData)
 const segmentTaskData = computed(() =>
   taskData.value.filter(({ segment }) => segment.id === activeSegment.value),
 )
@@ -32,14 +33,6 @@ const handleCreateTask = (task: TSubmitTask) => {
   request()
   activeSegment.value = task.segment_id
 }
-
-watch(segmentData, () => {
-  if (null !== activeSegment.value) {
-    return
-  }
-
-  activeSegment.value = segmentData.value.length ? segmentData.value[0].id : null
-})
 
 onMounted(request)
 </script>

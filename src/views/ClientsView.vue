@@ -13,15 +13,16 @@
 import { getSegments } from '@/api/api'
 import BaseLayout from '@/components/BaseLayout.vue'
 import { useApi } from '@/composables/useApi'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted } from 'vue'
 import SegmentList from '../components/SegmentList.vue'
 import ClientList from '../components/ClientList.vue'
 import ClientForm from '../components/ClientForm.vue'
 import type { TSubmitClient } from '@/types'
+import { useSegmentQuery } from '@/composables/useSegmentQuery'
 
 const { request, result } = useApi(getSegments, { showProgress: true })
 const segmentData = computed(() => (result.value?.success ? result.value.data : []))
-const activeSegment = ref<null | number>(null)
+const activeSegment = useSegmentQuery(segmentData)
 const clients = computed(() => {
   if (null === activeSegment.value) {
     return []
@@ -34,14 +35,6 @@ const handleCreateTask = (client: TSubmitClient) => {
   request()
   activeSegment.value = client.segment_id
 }
-
-watch(segmentData, () => {
-  if (null !== activeSegment.value) {
-    return
-  }
-
-  activeSegment.value = segmentData.value.length ? segmentData.value[0].id : null
-})
 
 onMounted(request)
 </script>

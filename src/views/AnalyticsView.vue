@@ -6,34 +6,29 @@
 </template>
 
 <script setup lang="ts">
-import { getTaskRuns } from '@/api/api'
+import { getSegments, getTaskRuns } from '@/api/api'
 import BaseLayout from '@/components/BaseLayout.vue'
 import TaskRunList from '@/components/TaskRunList.vue'
 import SegmentList from '@/components/SegmentList.vue'
-import { useApi } from '@/composables/useApi'
-import type { TTaskRun } from '@/types'
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import type { TSegment, TTaskRun } from '@/types'
+import { computed, onMounted } from 'vue'
+import { useSegmentQuery } from '@/composables/useSegmentQuery'
+import { useMultiApi } from '@/composables/useMultiApi'
 
-const { request, result } = useApi<TTaskRun[]>(getTaskRuns, { showProgress: true })
-
-const data = computed(() => (result.value?.success ? result.value.data : []))
-const segmentData = computed(() => {
-  const uniqueSegments = data.value.reduce((acc, { task }) => {
-    acc.set(task!.segment.id, task!.segment)
-    return acc
-  }, new Map())
-
-  return Array.from(uniqueSegments.values())
+const { request, result } = useMultiApi<[TTaskRun[], TSegment[]]>([getTaskRuns, getSegments], {
+  showProgress: true,
 })
 
-const activeSegment = ref()
+const taskRunData = computed(() => (result.value?.success ? result.value.data[0] : []))
+const segmentData = computed(() => (result.value?.success ? result.value.data[1] : []))
+const activeSegment = useSegmentQuery(segmentData)
 
 const taskRuns = computed(() => {
   if (null === activeSegment.value) {
     return []
   }
 
-  const taskRuns = data.value.filter(({ task }) => task!.segment.id === activeSegment.value)
+  const taskRuns = taskRunData.value.filter(({ task }) => task!.segment.id === activeSegment.value)
 
   return taskRuns.map(({ task, date, messages_count, errors_count }) => ({
     taskName: task!.name,
@@ -42,10 +37,6 @@ const taskRuns = computed(() => {
     allMessages: messages_count,
     errorMessages: errors_count,
   }))
-})
-
-watchEffect(() => {
-  activeSegment.value = segmentData.value.length ? segmentData.value[0].id : null
 })
 
 onMounted(request)
