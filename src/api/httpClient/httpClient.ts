@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { type AxiosResponse } from 'axios'
 import { createErrorResult, createSuccessResult } from './ResultContainer'
 
 type TNetworkErrorHandler = () => void
@@ -34,9 +34,9 @@ httpClient.interceptors.response.use(
           message: response.data.message ?? response.data ?? response.statusText,
         },
         response,
-      )
+      ) as unknown as AxiosResponse<any, any>
     } else {
-      return createSuccessResult(response.data, response)
+      return createSuccessResult(response.data, response) as unknown as AxiosResponse<any, any>
     }
   },
   (error) => {
