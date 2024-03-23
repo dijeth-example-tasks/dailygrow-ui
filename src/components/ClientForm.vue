@@ -82,9 +82,10 @@ const formatPhone = (value: string) => {
 
 const formatDate = (date: string): string => {
   const [day, month, year] = new Date(date)
-    .toLocaleString('en-US', { timeZone: 'Europe/Moscow' })
-    .split(',')[0]
-    .split('/')
+    .toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })
+    .split(', ')[0]
+    .replace(/(\d+)[.-/](\d+)[.-/](\d+)/, '$1.$2.$3')
+    .split('.')
   return `${year}-${month}-${day}`
 }
 
