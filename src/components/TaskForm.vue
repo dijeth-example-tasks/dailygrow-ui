@@ -21,9 +21,8 @@
       </el-select>
     </el-form-item>
 
-    <el-form-item label="Время" prop="time">
-      <el-input-number v-model="form.time" />
-      <span style="margin-left: 1em">{{ taskTimeLabel }}</span>
+    <el-form-item :label="taskTimeLabel" prop="time">
+      <time-component v-model="form.time" />
     </el-form-item>
 
     <el-form-item label="Текст рассылки" prop="text">
@@ -62,6 +61,11 @@ import { useToaster } from '@/plugins/toaster'
 import { TaskTimeLabel, type TSegment, type TSubmitTask, type TTaskType } from '@/types'
 import type { FormInstance } from 'element-plus'
 import { computed, reactive, ref } from 'vue'
+import OnesTimeInput from './task-time-inputs/OnesTimeInput.vue'
+import BirthdayTimeInput from './task-time-inputs/BirthdayTimeInput.vue'
+import DailyTimeInput from './task-time-inputs/DailyTimeInput.vue'
+import WeeklyTimeInput from './task-time-inputs/WeeklyTimeInput.vue'
+import MonthlyTimeInput from './task-time-inputs/MonthlyTimeInput.vue'
 
 const props = defineProps<{ segments: TSegment[] }>()
 const emit = defineEmits(['create'])
@@ -76,7 +80,7 @@ const form = reactive<TSubmitTask>({
   active: true,
   text: '',
   description: '',
-  time: 0,
+  time: Date.now(),
 })
 
 const rules = {
@@ -89,11 +93,26 @@ const rules = {
 }
 
 const taskTimeLabel = computed(() => TaskTimeLabel[form.type as TTaskType])
+const TimeComponent = computed(() => {
+  switch (form.type) {
+    case 'once':
+      return OnesTimeInput
+    case 'daily':
+      return DailyTimeInput
+    case 'weekly':
+      return WeeklyTimeInput
+    case 'monthly':
+      return MonthlyTimeInput
+    default:
+    case 'birthday':
+      return BirthdayTimeInput
+  }
+})
 
 const prepareData = (rawTask: TSubmitTask): TSubmitTask => {
-  if (rawTask.type === 'once') {
-    rawTask.time = Math.round((rawTask.time + Date.now()) / 1000)
-  }
+  // if (rawTask.type === 'once') {
+  //   rawTask.time = Math.round((rawTask.time + Date.now()) / 1000)
+  // }
 
   return rawTask
 }

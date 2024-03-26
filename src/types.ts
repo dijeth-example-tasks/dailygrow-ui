@@ -20,11 +20,11 @@ export type TTaskRun = {
 
 export type TTaskType = 'once' | 'daily' | 'weekly' | 'monthly' | 'birthday'
 export const TaskTimeLabel: { [k in TTaskType]: string } = {
-  once: 'Количество часов до запуска',
-  daily: 'Количество часов от начала дня',
-  weekly: 'Количество часов от начала недели',
-  monthly: 'Количество часов от начала месяца',
-  birthday: 'Количество часов до дня рождения',
+  once: 'Точная дата и время рассылки',
+  daily: 'Точное время рассылки',
+  weekly: 'День недели и время рассылки',
+  monthly: 'День месяца и время рассылки',
+  birthday: 'Количество дней до дня рождения и время',
 } as const
 
 export type TTask = {
