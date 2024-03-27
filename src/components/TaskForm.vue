@@ -60,7 +60,7 @@ import { createTask } from '@/api/api'
 import { useToaster } from '@/plugins/toaster'
 import { TaskTimeLabel, type TSegment, type TSubmitTask, type TTaskType } from '@/types'
 import type { FormInstance } from 'element-plus'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import OnesTimeInput from './task-time-inputs/OnesTimeInput.vue'
 import BirthdayTimeInput from './task-time-inputs/BirthdayTimeInput.vue'
 import DailyTimeInput from './task-time-inputs/DailyTimeInput.vue'
@@ -108,6 +108,26 @@ const TimeComponent = computed(() => {
       return BirthdayTimeInput
   }
 })
+
+watch(
+  () => form.type,
+  (value) => {
+    switch (value) {
+      case 'once':
+        form.time = Date.now()
+        break
+      case 'daily':
+      case 'weekly':
+      case 'monthly':
+        form.time = 12
+        break
+      default:
+      case 'birthday':
+        form.time = 24 + 12
+        break
+    }
+  },
+)
 
 const prepareData = (rawTask: TSubmitTask): TSubmitTask => {
   // if (rawTask.type === 'once') {

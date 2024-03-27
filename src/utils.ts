@@ -40,3 +40,41 @@ export const arrayDifference = (minuend: string[], subtrahend: string[]): string
         return !minuend.includes(cur) ? [...acc, cur] : acc
       }, [])
     : [...minuend]
+
+export type DayTimeParam = { days: number; hours: number; minutes: number }
+// Определяет отношение события и времени. "after" - указанное время отсчитывается после события, "before" - до
+export type TimeDirection = 'before' | 'after'
+
+export const convertHoursToDayTime = (hours: number, direction: TimeDirection): DayTimeParam => {
+  const hoursValue = hours % 24
+  const days = 1 + (hours - hoursValue) / 24
+  const minutesValue = direction === 'after' ? hoursValue * 60 : (24 - hoursValue) * 60
+  const minutes = minutesValue % 60
+
+  return {
+    days,
+    hours: (minutesValue - minutes) / 60,
+    minutes,
+  }
+}
+
+export const convertDayTimeToHours = (
+  { days, hours, minutes }: DayTimeParam,
+  direction: TimeDirection,
+): number => {
+  const minutesValue =
+    direction === 'after' ? minutes + 60 * hours : 24 * 60 - (minutes + 60 * hours)
+
+  return (days - 1) * 24 + minutesValue / 60
+}
+
+export const parseTimeString = (time: string): Omit<DayTimeParam, 'days'> => {
+  const [hours, minutes] = time.split(':').map((it) => parseInt(it, 10))
+  return { hours, minutes }
+}
+
+export const convertToTimeString = ({ hours, minutes }: Omit<DayTimeParam, 'days'>): string => {
+  const hoursString = hours >= 10 ? hours.toString() : `0${hours.toString()}`
+  const minutesString = minutes >= 10 ? minutes.toString() : `0${minutes.toString()}`
+  return `${hoursString}:${minutesString}`
+}
