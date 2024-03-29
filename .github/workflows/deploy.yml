@@ -1,43 +1,51 @@
-# name: deploy
-# on:
-#   push:
-#     branches: ['master']
-#   pull_request:
-#     branches: ['master']
+name: deploy
+on:
+  push:
+    branches: ['master']
+  pull_request:
+    branches: ['master']
 
-#   # Allows you to run this workflow manually from the Actions tab
-#   workflow_dispatch:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-#       - name: Build
-#         run: |
-#           npm install
-#           npm run build
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
 
-#       - name: Copy assets recursively to remote
-#         uses: garygrossgarten/github-action-scp@release
-#         with:
-#           local: dist/assets
-#           remote: ${{ secrets.REMOTE_PATH }}/assets
-#           host: ${{ secrets.HOST }}
-#           username: ${{ secrets.SSH_USER }}
-#           port: ${{ secrets.PORT }}
-#           privateKey: ${{ secrets.SSH_KEY}}
+      - name: Install dependencies
+        run: npm ci
 
-#       - name: Copy index to remote
-#         uses: garygrossgarten/github-action-scp@release
-#         with:
-#           local: dist/index.html
-#           remote: ${{ secrets.REMOTE_PATH }}/index.html
-#           host: ${{ secrets.HOST }}
-#           username: ${{ secrets.SSH_USER }}
-#           port: ${{ secrets.PORT }}
-#           privateKey: ${{ secrets.SSH_KEY}}
-# # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith
-# # https://habr.com/ru/articles/711278/
+      - name: Build
+        run: npm run build
+
+      - name: Copy assets recursively to remote
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: dist/assets
+          remote: ${{ secrets.REMOTE_PATH }}/assets
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.PORT }}
+          privateKey: ${{ secrets.SSH_KEY}}
+
+      - name: Copy index to remote
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: dist/index.html
+          remote: ${{ secrets.REMOTE_PATH }}/index.html
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.PORT }}
+          privateKey: ${{ secrets.SSH_KEY}}
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith
+# https://habr.com/ru/articles/711278/
