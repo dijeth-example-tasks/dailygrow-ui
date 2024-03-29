@@ -45,6 +45,7 @@ jobs:
           remote: ${{ secrets.REMOTE_PATH }}/index.html
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
+          username: ${{ secrets.SSH_USER }}
           privateKey: ${{ secrets.SSH_KEY}}
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith
 # https://habr.com/ru/articles/711278/
