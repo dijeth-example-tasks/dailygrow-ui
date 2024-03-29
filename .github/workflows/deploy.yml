@@ -43,11 +43,14 @@ jobs:
         with:
           local: index.html
           # local: dist/index.html
-          remote: ${{ secrets.REMOTE_PATH }}/index-raw.html
           # remote: ${{ secrets.REMOTE_PATH }}/index.html
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.PORT }}
+          # host: ${{ secrets.HOST }}
+          # port: ${{ secrets.PORT }}
+          # remote: ${{ secrets.REMOTE_PATH }}/index-raw.html
+          remote: /home/host1869465/dijeth.ru/htdocs/www/index-raw.html
+          host: serv79.hostland.ru
+          username: host1869465
+          port: 1024
           privateKey: ${{ secrets.SSH_KEY}}
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith
 # https://habr.com/ru/articles/711278/
