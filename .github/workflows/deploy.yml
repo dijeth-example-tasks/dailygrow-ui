@@ -16,33 +16,35 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
+      # - name: Set up Node
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+      #     cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      # - name: Install dependencies
+      #   run: npm ci
 
-      - name: Build
-        run: npm run build
+      # - name: Build
+      #   run: npm run build
 
-      - name: Copy assets recursively to remote
-        uses: garygrossgarten/github-action-scp@release
-        with:
-          local: dist/assets
-          remote: ${{ secrets.REMOTE_PATH }}/assets
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.PORT }}
-          privateKey: ${{ secrets.SSH_KEY}}
+      # - name: Copy assets recursively to remote
+      #   uses: garygrossgarten/github-action-scp@release
+      #   with:
+      #     local: dist/assets
+      #     remote: ${{ secrets.REMOTE_PATH }}/assets
+      #     host: ${{ secrets.HOST }}
+      #     username: ${{ secrets.SSH_USER }}
+      #     port: ${{ secrets.PORT }}
+      #     privateKey: ${{ secrets.SSH_KEY}}
 
       - name: Copy index to remote
         uses: garygrossgarten/github-action-scp@release
         with:
-          local: dist/index.html
-          remote: ${{ secrets.REMOTE_PATH }}/index.html
+          local: index.html
+          # local: dist/index.html
+          remote: ${{ secrets.REMOTE_PATH }}/index-raw.html
+          # remote: ${{ secrets.REMOTE_PATH }}/index.html
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.PORT }}
